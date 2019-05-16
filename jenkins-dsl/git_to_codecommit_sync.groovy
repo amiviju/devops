@@ -8,7 +8,7 @@ hudson.FilePath workspace = hudson.model.Executor.currentExecutor().getCurrentWo
 
 String DaiichiDirectory = 'daiichi-deployment'
 String GITrepoLink = "https://github.com/reancloud/daiichi-landing-zone.git"
-String GITBranch = "*/master"
+String GITBranch = "*/DCH-162"
 
 folder DaiichiDirectory
 freeStyleJob("$DaiichiDirectory"+"/"+'git_to_codecommit_sync'){
@@ -23,7 +23,7 @@ scm {
 			remote 
 			{ 
 			url("$GITrepoLink") 
-			credentials('	daiichi-github-service-account')
+			credentials('daiichi-github-service-account')
 			}
         }
     }
@@ -41,7 +41,7 @@ def shell_script_string = """\
 git config --global credential.helper '!aws codecommit credential-helper \$@' 
 git config --global credential.useHttpPath true 
 src_git_url='https://github.com/reancloud/daiichi-landing-zone.git' 
-dest_git_url='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/daiichi-landing-zone' 
+dest_git_url='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/daiichi-landing-zonesss' 
 git clone \$src_git_url 
 cd devops 
 git checkout  master 
