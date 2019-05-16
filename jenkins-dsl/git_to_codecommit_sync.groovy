@@ -52,8 +52,19 @@ shell(shell_script_string)
    }
 }
 
-deliveryPipelineView('dsl') {
-	pipelines {
-		component('name',"$DaiichiDirectory"+"/"+'git_to_codecommit_sync')
-	}
+listView('dsl') {
+    filterBuildQueue()
+    filterExecutors()
+    jobs {
+        name('seed-job')
+    }
+    columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
 }
