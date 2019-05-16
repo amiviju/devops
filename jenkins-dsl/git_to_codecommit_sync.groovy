@@ -32,7 +32,7 @@ triggers
     {
     scm('* * * * *')
     }
-
+ deliveryPipelineConfiguration('Daiichi-Git-CodeCommit-Sync-Job')
 steps 
    {
               
@@ -41,14 +41,20 @@ def shell_script_string = """\
 git config --global credential.helper '!aws codecommit credential-helper \$@' 
 git config --global credential.useHttpPath true 
 
-src_git_url='https://github.com/amiviju/devops.git' 
+src_git_url='https://github.com/amiviju/devops' 
 dest_git_url='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/rc-daii' 
 git clone \$src_git_url 
 cd devops 
 git checkout  master 
 git pull origin master 
-git push \$dest_git_url master:master 
+git push \$dest_git_url master:master --force 
 	"""
 shell(shell_script_string)
    }
+}
+
+deliveryPipelineView('dsl-pipeline') {
+	pipelines {
+		component('name',"$DaiichiDirectory"+"/"+'Daiichi-Git-CodeCommit-Sync-Job')
+	}
 }
