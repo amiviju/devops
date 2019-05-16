@@ -6,12 +6,12 @@ import hudson.FilePath
 import hudson.*
 hudson.FilePath workspace = hudson.model.Executor.currentExecutor().getCurrentWorkspace()
 
-String DaiichiDirectory = 'Daiichi-Deployment'
-String GITrepoLink = "https://github.com/amiviju/devops.git"
+String DaiichiDirectory = 'daiichi-deployment'
+String GITrepoLink = "https://github.com/reancloud/daiichi-landing-zone.git"
 String GITBranch = "*/master"
 
 folder DaiichiDirectory
-freeStyleJob("$DaiichiDirectory"+"/"+'Daiichi-Git-CodeCommit-Sync-Job'){
+freeStyleJob("$DaiichiDirectory"+"/"+'git_to_codecommit_sync'){
 
 wrappers {
         preBuildCleanup()
@@ -23,7 +23,7 @@ scm {
 			remote 
 			{ 
 			url("$GITrepoLink") 
-			credentials('git-key')
+			credentials('	daiichi-github-service-account')
 			}
         }
     }
@@ -32,7 +32,7 @@ triggers
     {
     scm('* * * * *')
     }
- deliveryPipelineConfiguration('Daiichi-Git-CodeCommit-Sync-Job')
+ deliveryPipelineConfiguration('git_to_codecommit_sync')
 steps 
    {
               
@@ -40,9 +40,8 @@ def shell_script_string = """\
 #!/bin/bash 
 git config --global credential.helper '!aws codecommit credential-helper \$@' 
 git config --global credential.useHttpPath true 
-
-src_git_url='https://github.com/amiviju/devops' 
-dest_git_url='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/rc-daii' 
+src_git_url='https://github.com/reancloud/daiichi-landing-zone.git' 
+dest_git_url='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/daiichi-landing-zone' 
 git clone \$src_git_url 
 cd devops 
 git checkout  master 
@@ -53,8 +52,8 @@ shell(shell_script_string)
    }
 }
 
-deliveryPipelineView('dsl-pipeline') {
+deliveryPipelineView('dsl') {
 	pipelines {
-		component('name',"$DaiichiDirectory"+"/"+'Daiichi-Git-CodeCommit-Sync-Job')
+		component('name',"$DaiichiDirectory"+"/"+'git_to_codecommit_sync')
 	}
 }
