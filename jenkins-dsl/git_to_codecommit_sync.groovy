@@ -57,12 +57,5 @@ listView('dsl') {
         name('seed-job')
     }
     columns {
-        status()
-        weather()
-        name()
-        lastSuccess()
-        lastFailure()
-        lastDuration()
-        buildButton()
     }
 }
