@@ -23,7 +23,7 @@ scm {
 			remote 
 			{ 
 			url("$GITrepoLink") 
-			credentials('')
+			credentials('git-key')
 			}
         }
     }
