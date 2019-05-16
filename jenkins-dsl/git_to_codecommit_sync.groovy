@@ -32,7 +32,7 @@ triggers
     {
     scm('* * * * *')
     }
- deliveryPipelineConfiguration('git_to_codecommit_sync')
+ 
 steps 
    {
               
