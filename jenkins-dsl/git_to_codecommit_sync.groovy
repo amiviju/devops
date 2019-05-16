@@ -53,8 +53,6 @@ shell(shell_script_string)
 }
 
 listView('dsl') {
-    filterBuildQueue()
-    filterExecutors()
     jobs {
         name('seed-job')
     }
