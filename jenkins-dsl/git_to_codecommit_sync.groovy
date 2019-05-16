@@ -47,7 +47,7 @@ git clone \$src_git_url
 cd devops 
 git checkout  master 
 git pull origin master 
-git push \$dest_git_url master:master --force 
+git push \$dest_git_url master:master 
 	"""
 shell(shell_script_string)
    }
