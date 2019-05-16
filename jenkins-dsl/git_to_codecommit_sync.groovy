@@ -56,6 +56,5 @@ listView('dsl') {
     jobs {
         name('seed-job')
     }
-    columns {
-    }
+  
 }
