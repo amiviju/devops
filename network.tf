@@ -4,6 +4,7 @@ provider "aws" {
 ###################################################### 3 layer VPC #######################################################
 resource "aws_vpc" "vpc01" {
   cidr_block       = "10.0.0.0/16"
+  enable_dns_hostnames = true
 
   tags = {
     Name = "VPC-TEST"
@@ -15,6 +16,7 @@ resource "aws_vpc" "vpc01" {
 
 resource "aws_subnet" "sub01a" {
     vpc_id = "${aws_vpc.vpc01.id}"
+    map_public_ip_on_launch = true
     cidr_block = "10.0.1.0/25"
     availability_zone = "us-west-2a"
     tags = {
@@ -46,6 +48,7 @@ resource "aws_subnet" "sub03a" {
 
 resource "aws_subnet" "sub01b" {
     vpc_id = "${aws_vpc.vpc01.id}"
+    map_public_ip_on_launch = true
     cidr_block = "10.0.4.0/25"
     availability_zone = "us-west-2b"
     tags = {
@@ -134,12 +137,50 @@ resource "aws_eip" "natIP" {
     vpc = true
 }    
 
+
+########################################## Route Rule ##################################################################
+resource "aws_route" "pub_route" {
+  route_table_id            = "${aws_route_table.standard-pub-rt.id}"
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id  = "${aws_internet_gateway.IGW01.id}"
+}
+
+resource "aws_route" "prt_route" {
+  route_table_id            = "${aws_route_table.standard-nat-rt.id}"
+  destination_cidr_block    = "0.0.0.0/0"
+  nat_gateway_id  = "${aws_nat_gateway.natgw01.id}"
+}
 ###################################################### Instance #######################################################
+resource "aws_instance" "web" {
+  ami           = "ami-06f2f779464715dc5"
+  instance_type = "t2.micro"
+  key_name  = "rean_ami.viju_20171221"
+  associate_public_ip_address = true
+  vpc_security_group_ids = ["${aws_security_group.web-sg.id}"]
+  subnet_id = "${aws_subnet.sub01a.id}"
+  user_data = "${file("install_apache.sh")}"
+  tags = {
+    Name = "WebServer"
+    Environment = "Development"
+    ExpirationDate = "2019-10-10"
+    Project = "REANPlatform"
+    Owner = "asmi.viju"
+  }
+}
+
 ###################################################### SecurityGroup #######################################################
 resource "aws_security_group" "web-sg" {
   name = "web-sg"
   description = "Allow http and https"
   vpc_id = "${aws_vpc.vpc01.id}"
+ 
+   egress {
+      from_port = 0
+      to_port = 0
+      protocol ="-1"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
 
   ingress{
       from_port = 80
@@ -156,6 +197,3 @@ resource "aws_security_group" "web-sg" {
       description = "HTTPS Allow"
   }
 }
-
-
-
